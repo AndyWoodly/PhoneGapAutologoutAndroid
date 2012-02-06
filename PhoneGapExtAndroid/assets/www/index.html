@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Ext Plugin Test</title>
+</head>
+<body>
+	<!-- Button -->
+	<input disabled id="test-plugin" type="button"
+		value="Call Test Plugin" />
+	<hr>
+
+	<!-- Place Holder for the test plugin result -->
+	<div id="result"></div>
+
+	<hr>
+
+	<script type="text/javascript" src="phonegap-1.4.1.js"></script>
+	<script type="text/javascript" src="extTest.js"></script>
+	<script type="text/javascript">
+		document.addEventListener('deviceready', function() {
+			var btn = document.getElementById("test-plugin");
+			btn.onclick = function() {
+				window.plugins.extTest.test(
+					"test string",
+					function(r){printResult(r)},
+					function(e){console.log(e)}
+				);
+	    	}
+	    	btn.disabled=false;
+  		}, true);
+ 
+ 
+		function printResult(result) {
+			var innerHtmlText="<b>"+result.param+"</b>";    
+			document.getElementById("result").innerHTML=innerHtmlText;
+		}
+	</script>
+
+</body>
+</html>
