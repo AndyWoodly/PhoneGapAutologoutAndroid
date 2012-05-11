@@ -1,39 +1,40 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
-<title>Ext Plugin Test</title>
+<title>AutoLogout Plugin Test</title>
 </head>
+
 <body>
-	<!-- Button -->
-	<input disabled id="test-plugin" type="button"
-		value="Call Test Plugin" />
+
+	<input id="test-button" type="button" value="Click me!" />
+	
 	<hr>
 
-	<!-- Place Holder for the test plugin result -->
 	<div id="result"></div>
 
 	<hr>
 
 	<script type="text/javascript" src="phonegap-1.4.1.js"></script>
-	<script type="text/javascript" src="extTest.js"></script>
+	<script type="text/javascript" src="autoLogout.js"></script>
 	<script type="text/javascript">
 		document.addEventListener('deviceready', function() {
-			var btn = document.getElementById("test-plugin");
+			var logout = function() {
+				alert("logged out!");
+			}
+			
+			// register logout
+			window.plugins.autoLogout.startAutoLogout(
+				"logout",
+				function(r){console.log(r)},
+				function(e){console.log(e)}
+			);
+			
+			var btn = document.getElementById("test-button");
 			btn.onclick = function() {
-				window.plugins.extTest.test(
-					"test string",
-					function(r){printResult(r)},
-					function(e){console.log(e)}
-				);
+				console.log("click");
 	    	}
-	    	btn.disabled=false;
   		}, true);
- 
- 
-		function printResult(result) {
-			var innerHtmlText="<b>"+result.param+"</b>";    
-			document.getElementById("result").innerHTML=innerHtmlText;
-		}
 	</script>
 
 </body>
