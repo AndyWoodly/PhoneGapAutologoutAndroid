@@ -1,4 +1,4 @@
-package com.canoo.phonegap.ext;
+package com.phonegap.plugin.autologout;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -19,15 +19,12 @@ import com.phonegap.api.PluginResult.Status;
 public class AutoLogoutPlugin extends Plugin {
 
 	private static final String LOG_TAG = "AutoLogoutPlugin";
-	
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	
 	private static final String START = "startAutoLogout";
 
     private ScheduledThreadPoolExecutor executor;
-
 	private String callback;
-
 	private LogoutChecker checker;
 
     @Override
@@ -39,9 +36,7 @@ public class AutoLogoutPlugin extends Plugin {
 			try {
 				JSONObject params = data.getJSONObject(0);
                 callback = prepareCallback(params.getString("callback"));
-                
                 final int timeoutInSeconds = params.getInt("timeOutInSeconds");
-                
                 initTimer(timeoutInSeconds);
 
 				result = new PluginResult(Status.OK, jsonObj);

@@ -1,4 +1,4 @@
-package com.canoo.phonegap.ext;
+package com.phonegap.plugin.autologout;
 
 import com.phonegap.*;
 
