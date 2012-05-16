@@ -18,6 +18,10 @@ import com.phonegap.api.PluginResult.Status;
 
 public class AutoLogoutPlugin extends Plugin {
 
+	private static final String LOG_TAG = "AutoLogoutPlugin";
+	
+	private static final boolean DEBUG = true;
+	
 	private static final String START = "startAutoLogout";
 
     private ScheduledThreadPoolExecutor executor;
@@ -33,20 +37,22 @@ public class AutoLogoutPlugin extends Plugin {
 			JSONObject jsonObj = new JSONObject();
 
 			try {
-                callback = prepareCallback(data.getString(0));
-                final int timeoutInSeconds = data.getInt(1);
-
+				JSONObject params = data.getJSONObject(0);
+                callback = prepareCallback(params.getString("callback"));
+                
+                final int timeoutInSeconds = params.getInt("timeOutInSeconds");
+                
                 initTimer(timeoutInSeconds);
 
 				result = new PluginResult(Status.OK, jsonObj);
 			} catch (JSONException e) {
-				Log.e("AutoLogoutPlugin", "JSON plugin error", e);
+				Log.e(LOG_TAG, "JSON plugin error", e);
 				result = new PluginResult(Status.JSON_EXCEPTION);
 			}
 
 		} else {
 			result = new PluginResult(Status.INVALID_ACTION);
-			Log.d("AutoLogoutPlugin", "Invalid action : "+action+" passed");
+			Log.d(LOG_TAG, "Invalid action : "+action+" passed");
 		}
 		return result;
 	}
@@ -82,41 +88,47 @@ public class AutoLogoutPlugin extends Plugin {
         }
 		
         checker = new LogoutChecker(executor, timeoutInSeconds, TimeUnit.SECONDS);
+        checker.reset();
         checker.reschedule(TimeUnit.SECONDS.toMillis(timeoutInSeconds));
+		
+        if (DEBUG) Log.d(LOG_TAG, "checker initialized, callback: "+callback);
     }
     
     private void resetTimer() {
+		if (DEBUG) Log.d(LOG_TAG, "reset called");
     	checker.reset();
     }
     
     private void logout() {
+		if (DEBUG) Log.d(LOG_TAG, "logout called");
     	sendJavascript(callback);
     }
 
     private class LogoutChecker implements Runnable {
 		
     	private final ScheduledThreadPoolExecutor executor;
-    	private final long timeOutInMillies;
+    	private final long timeOutInMillis;
     	
     	private long nextLogoutInMillis;
     	
 		public LogoutChecker(ScheduledThreadPoolExecutor executor, long timeOut, TimeUnit timeUnit) {
 			this.executor = executor;
-			this.timeOutInMillies = timeUnit.toMillis(timeOut);
-			reset();
+			this.timeOutInMillis = timeUnit.toMillis(timeOut);
 		}
 
 		public synchronized void reset() {
 			final long now = System.currentTimeMillis();
-			this.nextLogoutInMillis = now + timeOutInMillies;
+			this.nextLogoutInMillis = now + timeOutInMillis;
 		}
 		
 		public synchronized void reschedule(long whenInMillis) {
-			executor.remove(this);
-			executor.schedule(this, whenInMillis, TimeUnit.MILLISECONDS);
+			executor.remove(LogoutChecker.this);
+			executor.schedule(LogoutChecker.this, whenInMillis, TimeUnit.MILLISECONDS);
+			if (DEBUG) Log.d(LOG_TAG, "timer (re)scheduled at "+whenInMillis);
 		}
 
 		public synchronized void run() {
+			if (DEBUG) Log.d(LOG_TAG, "checking logout ...");
 			long now = System.currentTimeMillis();
 			if (now >= nextLogoutInMillis) {
 				logout();

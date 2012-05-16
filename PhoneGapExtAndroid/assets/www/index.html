@@ -7,25 +7,22 @@
 
 <body>
 
-	<input id="test-button" type="button" value="Click me!" />
-	
-	<hr>
-
-	<div id="result"></div>
-
-	<hr>
+	<input id="test-button" type="button" value="Click me or wait!" />	
 
 	<script type="text/javascript" src="phonegap-1.4.1.js"></script>
 	<script type="text/javascript" src="autoLogout.js"></script>
 	<script type="text/javascript">
+
+		// define global logout function
+		var logout = function() {
+			alert("logged out!");
+		}
+
 		document.addEventListener('deviceready', function() {
-			var logout = function() {
-				alert("logged out!");
-			}
 			
-			// register logout
+			// start auto logout in 5 seconds
 			window.plugins.autoLogout.startAutoLogout(
-				"logout",
+				{ callback: "logout", timeOutInSeconds: 5 },
 				function(r){console.log(r)},
 				function(e){console.log(e)}
 			);

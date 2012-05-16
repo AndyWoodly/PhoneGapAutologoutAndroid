@@ -17,5 +17,5 @@
     <plugin name="FileTransfer" value="com.phonegap.FileTransfer"/>
     <plugin name="Capture" value="com.phonegap.Capture"/>
     
-    <plugin name="ExtTestPlugin" value="com.canoo.phonegap.ext.ExtTestPlugin"/>
+    <plugin name="AutoLogoutPlugin" value="com.canoo.phonegap.ext.AutoLogoutPlugin"/>
 </plugins>
